@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block title %}
+    <title>{% if page_title %}{{ page_title }}{% else %}Local library df{% endif %}</title>
+    {% endblock %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha256-djO3wMl9GeaC/u6K+ic4Uj/LKhRUSlUFcsruzS7v5ms=" crossorigin="anonymous">
+    <!-- Add additional CSS in static file -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <div class="container py-3">
+        <header>
+            <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+                <a href="" class="d-flex align-items-center text-dark text-decoration-none">
+                    <span class="fs-4">Library System</span>
+                </a>
+
+                <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+                    <a href="{% url 'index' %}" class="me-3 py-2 text-dark text-decoration-none">Home</a>
+                    <a href="{% url 'books' %}" class="me-3 py-2 text-dark text-decoration-none">All books</a>
+                    <a href="{% url 'authors' %}" class="me-3 py-2 text-dark text-decoration-none">All authors</a>
+                    {% if user.is_authenticated %}
+                      {% if user.is_staff %}
+                        <a href="{% url 'all-borrowed' %}" class="me-3 py-2 text-dark text-decoration-none">All Borrowed</a>
+                      {% endif %}
+                      <a href="{% url 'my-borrowed' %}" class="me-3 py-2 text-dark text-decoration-none">My Borrowed</a>
+                      <span class="me-3 py-2 text-dark text-decoration-none"><b>{{ user.get_username }} </b></span><a href="{% url 'logout' %}?next={{request.path}}" class="me-3 py-2 text-dark text-decoration-none">Logout</a>
+                    {% else %}
+                      <a href="{% url 'login' %}?next={{request.path}}" class="me-3 py-2 text-dark text-decoration-none">Login</a>
+                    {% endif %}
+                </nav>
+            </div>
+
+            <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+                <h1 class="display-4 fw-normal">Library System</h1>
+            </div>
+        </header>
+
+        <main>
+
+            <div class="row">
+                <div class="col-sm-2">
+                    {% block sidebar %}
+                        <ul class="sidebar-nav">
+                            <li><a href="{% url 'index' %}">Home</a></li>
+                            <li><a href="{% url 'books' %}">All books</a></li>
+                            <li><a href="{% url 'authors' %}">All authors</a></li>
+                        </ul>
+                    {% endblock %}
+                </div>
+                <div class="col-sm-10">
+                    {% block content %}{% endblock %}
+
+                    {% block pagination %}
+                      {% if is_paginated %}
+                        <div class="pagination">
+                          <span class="page-links">
+                            {% if page_obj.has_previous %}
+                              <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+                            {% endif %}
+                            <span class="page-current">
+                              Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                            </span>
+                            {% if page_obj.has_next %}
+                              <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+                            {% endif %}
+                          </span>
+                        </div>
+                      {% endif %}
+                    {% endblock %}
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="pt-4 my-md-5 pt-md-5 border-top">
+            <div class="row">
+              <div class="col-12 col-md">
+                <small class="d-block mb-3 text-muted">&copy; 2017–2021</small>
+              </div>
+              <div class="col-6 col-md">
+                <h5>Features</h5>
+                <ul class="list-unstyled text-small">
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Cool stuff</a></li>
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Random feature</a></li>
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Team feature</a></li>
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Stuff for developers</a></li>
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Another one</a></li>
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Last time</a></li>
+                </ul>
+              </div>
+              <div class="col-6 col-md">
+                <h5>Resources</h5>
+                <ul class="list-unstyled text-small">
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Resource</a></li>
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Resource name</a></li>
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Another resource</a></li>
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Final resource</a></li>
+                </ul>
+              </div>
+              <div class="col-6 col-md">
+                <h5>About</h5>
+                <ul class="list-unstyled text-small">
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Team</a></li>
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Locations</a></li>
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Privacy</a></li>
+                  <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Terms</a></li>
+                </ul>
+              </div>
+            </div>
+          </footer>
+
+
+
+    </div>
+
+<!-- js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha256-XDbijJp72GS2c+Ij234ZNJIyJ1Nv+9+HH1i28JuayMk=" crossorigin="anonymous"></script>
+
+</body>
+
+</html>
